@@ -362,6 +362,21 @@ export class A2AClient {
 
     // 1) Try well-known endpoint first
     try {
+      const wellKnownUrl = `${this.baseUrl}/.well-known/agent-card.json`;
+      const res = await this.fetchImpl(wellKnownUrl, {
+        method: "GET",
+        headers: { Accept: "application/json" },
+      });
+      if (res.ok) {
+        const json = (await res.json()) as AgentCard;
+        this.cachedAgentCard = json;
+        return json;
+      }
+    } catch (_) {
+      /* ignore and fallback */
+    }
+
+    try {
       const wellKnownUrl = `${this.baseUrl}/.well-known/agent.json`;
       const res = await this.fetchImpl(wellKnownUrl, {
         method: "GET",
